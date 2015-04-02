@@ -1,0 +1,114 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>设置党费标准</title>
+<link rel="stylesheet" type="text/css"
+	href="/partysystem/resources/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="/partysystem/resources/css/datatables.css">
+
+<script type="text/javascript"
+	src="/partysystem/resources/javascripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript"
+	src="/partysystem/resources/javascripts/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="/partysystem/resources/javascripts/datatable-editable.js"></script>
+<script type="text/javascript"
+	src="/partysystem/resources/javascripts/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#example').dataTable({
+			"processing": true,
+	        "serverSide": true,
+			"ajax":'/partysystem/user/findAllUser.do',
+			"bAutoWith" : true,
+			"oLanguage" : {
+				"sProcessing" : "正在加载中......",
+				"sLengthMenu" : "每页显示 _MENU_ 条记录",
+				"sZeroRecords" : "对不起，查询不到相关数据！",
+				"sEmptyTable" : "表中无数据存在！",
+				"sInfo" : "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录",
+				"sInfoEmpty" : "",
+				"sInfoFiltered" : "数据表中共为 _MAX_ 条记录",
+				"sSearch" : "搜索",
+				"oPaginate" : {
+					"sFirst" : "首页",
+					"sPrevious" : "上一页",
+					"sNext" : "下一页",
+					"sLast" : "末页"
+				}
+			}
+		});
+	});
+
+	Date.prototype.format = function (format) {  
+        var o = {  
+            "M+": this.getMonth() + 1, //month  
+            "d+": this.getDate(), //day  
+            "h+": this.getHours(), //hour  
+            "m+": this.getMinutes(), //minute  
+            "s+": this.getSeconds(), //second  
+            "q+": Math.floor((this.getMonth() + 3) / 3), //quarter  
+            "S": this.getMilliseconds() //millisecond  
+        }  
+        if (/(y+)/.test(format))  
+            format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));  
+        for (var k in o)  
+            if (new RegExp("(" + k + ")").test(format))  
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));  
+        return format;  
+    }  
+	
+	function query() {
+		$.ajax({
+			url : '/partysystem/user/findAllUser.do',
+			type : 'post',
+			contentType : 'application/json',
+			dataType : 'json',
+			success : function(data) {
+				var obj = data;
+				if (obj != "") {
+					$('#tbody').empty();
+					for (i = 0; i < obj.length; i++) {
+						$(
+								'<tr><td>' + obj[i].userType + '</td><td>'
+										+ obj[i].name + '</td><td>'
+										+ obj[i].gender + '</td><td>'
+										+ new Date(obj[i].joinDate).format("yyyy-MM-dd") + '</td><td>')
+								.appendTo('#tbody');
+					}
+				} else {
+					$('#tbody').empty();
+				}
+			}
+		});
+	}
+</script>
+
+</head>
+<body>
+	<button onclick="query();">查询</button>
+	<table class="table table-bordered table-striped"
+		id="example">
+		<thead>
+			<tr>
+				<td>人员类别</td>
+				<td>姓名</td>
+				<td>性别</td>
+				<td>入党时间</td>
+				<!--  
+			<td>党费标准（元/月）</td>
+			<td>缴费情况</td>
+			<td>已缴费到</td>
+			-->
+				<td>操作</td>
+			</tr>
+		</thead>
+		<tbody id="tbody">
+
+		</tbody>
+	</table>
+</body>
+</html>
